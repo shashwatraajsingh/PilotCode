@@ -38,12 +38,12 @@ const spaceGrotesk = Space_Grotesk({
 })
 
 export const metadata: Metadata = {
-  title: 'Devin AI - Autonomous Software Engineer',
-  description: 'Transform your development workflow with Devin, the AI software engineer that codes, tests, and deploys autonomously.',
+  title: 'PilotCode - Autonomous Software Engineer',
+  description: 'Transform your development workflow with PilotCode, the AI software engineer that codes, tests, and deploys autonomously.',
   keywords: 'AI, software engineer, autonomous coding, development, automation',
-  authors: [{ name: 'Devin AI Team' }],
+  authors: [{ name: 'PilotCode Team' }],
   openGraph: {
-    title: 'Devin AI - Your Autonomous Software Engineer',
+    title: 'PilotCode - Your Autonomous Software Engineer',
     description: 'Transform your development workflow with an AI that actually understands your codebase.',
     type: 'website',
   },
@@ -62,12 +62,11 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </head>
-      <body className="font-sans antialiased bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 min-h-screen">
-        {/* Animated background elements */}
+      <body className="font-sans antialiased bg-background min-h-screen selection:bg-white/20">
+        {/* Minimal background */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl animate-pulse delay-2000"></div>
+          <div className="absolute inset-0 bg-dot-pattern opacity-[0.3]"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background"></div>
         </div>
         <AuthProvider>
           {children}

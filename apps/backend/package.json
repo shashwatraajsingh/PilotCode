@@ -1,7 +1,7 @@
 {
-  "name": "@devin-ai/backend",
+  "name": "@pilotcode/backend",
   "version": "1.0.0",
-  "description": "Devin AI Backend - Autonomous Software Engineer",
+  "description": "PilotCode Backend - Autonomous Software Engineer",
   "scripts": {
     "build": "tsc",
     "build:nest": "nest build",

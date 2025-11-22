@@ -1,3 +1,127 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base Colors - Clean Minimal Dark Theme */
+    --background: 0 0% 3.9%;
+    /* #0A0A0A */
+    --foreground: 0 0% 98%;
+    /* #FAFAFA */
+
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    /* White */
+    --primary-foreground: 0 0% 9%;
+
+    --secondary: 0 0% 14.9%;
+    /* Zinc 800 */
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 14.9%;
+    /* Zinc 800 */
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+
+    --radius: 0.5rem;
+
+    /* Custom Brand Colors - Minimalist */
+    --brand-primary: 0 0% 98%;
+    /* White */
+    --brand-secondary: 0 0% 63.9%;
+    /* Zinc 400 */
+    --brand-accent: 0 0% 14.9%;
+    /* Zinc 800 */
+
+    /* Surface Colors */
+    --surface-primary: 0 0% 3.9%;
+    --surface-secondary: 0 0% 9%;
+    --surface-tertiary: 0 0% 12%;
+    --surface-overlay: 0 0% 3.9% / 0.8;
+
+    /* Text Colors */
+    --text-primary: 0 0% 98%;
+    --text-secondary: 0 0% 63.9%;
+    --text-tertiary: 0 0% 45.1%;
+
+    /* Shadows - Subtle */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+    /* Glows - Removed for minimalism */
+    --glow-primary: none;
+    --glow-secondary: none;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    font-family: var(--font-inter), sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-inter), sans-serif;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+}
+
+/* Custom Utilities */
+@layer utilities {
+  .glass {
+    @apply bg-black/40 backdrop-blur-md border border-white/10;
+  }
+
+  .glass-hover {
+    @apply hover:bg-white/5 transition-colors duration-200;
+  }
+
+  .text-gradient {
+    @apply text-foreground;
+    /* Removed gradient for minimalism */
+  }
+
+  .text-gradient-brand {
+    @apply text-foreground;
+    /* Removed gradient for minimalism */
+  }
+
+  .glow-text {
+    text-shadow: none;
+    /* Removed glow */
+  }
+
+  /* Subtle dot pattern for background */
+  .bg-dot-pattern {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
