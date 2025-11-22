@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: devin-postgres
+    environment:
+      POSTGRES_USER: devin
+      POSTGRES_PASSWORD: devin_password
+      POSTGRES_DB: devin_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - devin-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: devin-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - devin-network
+
+  # Apache Kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: devin-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - devin-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: devin-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "1010:1010"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:1010
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:1010
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    networks:
+      - devin-network
+
+  # Docker Sandbox for Code Execution
+  sandbox:
+    image: devin-sandbox:latest
+    build:
+      context: ./docker/sandbox
+      dockerfile: Dockerfile
+    container_name: devin-sandbox
+    privileged: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - devin-network
+
+  # Backend (NestJS)
+  backend:
+    build:
+      context: .
+      dockerfile: ./apps/backend/Dockerfile
+    container_name: devin-backend
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: postgresql://devin:devin_password@postgres:5432/devin_db
+      REDIS_URL: redis://redis:6379
+      KAFKA_BROKERS: kafka:1010
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+    networks:
+      - devin-network
+    volumes:
+      - ./apps/backend:/app
+      - /app/node_modules
+
+  # Frontend (Next.js)
+  frontend:
+    build:
+      context: .
+      dockerfile: ./apps/frontend/Dockerfile
+    container_name: devin-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://backend:3001
+    depends_on:
+      - backend
+    networks:
+      - devin-network
+    volumes:
+      - ./apps/frontend:/app
+      - /app/node_modules
+
+networks:
+  devin-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

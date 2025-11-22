@@ -1,0 +1,294 @@
+// Prisma schema for Devin AI
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Model
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      UserRole @default(USER)
+  
+  // Relationships
+  tasks     Task[]
+  apiKeys   ApiKey[]
+  sessions  Session[]
+  
+  // Metadata
+  isActive  Boolean  @default(true)
+  lastLogin DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([email])
+}
+
+// API Keys (for BYOK model)
+model ApiKey {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  provider  String   // "openai", "anthropic", "github"
+  key       String   @unique
+  name      String?
+  
+  isActive  Boolean  @default(true)
+  lastUsed  DateTime?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([provider])
+}
+
+// Session Model (for refresh tokens)
+model Session {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  refreshToken String   @unique
+  ipAddress    String?
+  userAgent    String?
+  
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  
+  @@index([userId])
+  @@index([refreshToken])
+}
+
+// Main Task Model
+model Task {
+  id          String   @id @default(uuid())
+  description String
+  status      TaskStatus @default(PLANNED)
+  repoUrl     String?
+  repoPath    String?
+  targetBranch String?
+  
+  // User relationship
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  // Relationships
+  executionPlan ExecutionPlan?
+  executions    Execution[]
+  deliveries    Delivery[]
+  
+  // Metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  completedAt DateTime?
+  
+  @@index([status])
+  @@index([createdAt])
+  @@index([userId])
+}
+
+// Execution Plan (Step 1: Brain output)
+model ExecutionPlan {
+  id        String   @id @default(uuid())
+  taskId    String   @unique
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  
+  subtasks  SubTask[]
+  metadata  Json?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Individual SubTask
+model SubTask {
+  id              String   @id @default(uuid())
+  executionPlanId String
+  executionPlan   ExecutionPlan @relation(fields: [executionPlanId], references: [id], onDelete: Cascade)
+  
+  order           Int
+  description     String
+  status          TaskStatus @default(PLANNED)
+  
+  // Task details
+  filesToEdit     String[]
+  codeChanges     String?
+  commandsToRun   String[]
+  verificationSteps String[]
+  successConditions String[]
+  failureConditions String[]
+  dependencies    String[]
+  
+  // Execution results
+  output          String?
+  errorMessage    String?
+  retryCount      Int @default(0)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  completedAt     DateTime?
+  
+  @@index([executionPlanId, order])
+  @@index([status])
+}
+
+// Code Execution Records (Step 3: Legs)
+model Execution {
+  id          String   @id @default(uuid())
+  taskId      String
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  
+  type        ExecutionType
+  command     String
+  workingDir  String?
+  
+  // Results
+  stdout      String?
+  stderr      String?
+  exitCode    Int?
+  duration    Int? // milliseconds
+  
+  // Docker sandbox info
+  containerId String?
+  sandboxed   Boolean @default(true)
+  
+  status      ExecutionStatus
+  
+  createdAt   DateTime @default(now())
+  completedAt DateTime?
+  
+  @@index([taskId])
+  @@index([status])
+}
+
+// File Modifications (Step 2: Hands)
+model FileModification {
+  id          String   @id @default(uuid())
+  
+  filePath    String
+  operation   FileOperation
+  
+  // Content
+  originalContent String?
+  newContent      String?
+  diff            String?
+  
+  // Metadata
+  language    String?
+  successful  Boolean @default(false)
+  errorMessage String?
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([filePath])
+}
+
+// GitHub Delivery (Step 5: Delivery Layer)
+model Delivery {
+  id          String   @id @default(uuid())
+  taskId      String
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  
+  // GitHub info
+  repoOwner   String
+  repoName    String
+  branchName  String
+  baseBranch  String
+  
+  // PR info
+  prNumber    Int?
+  prUrl       String?
+  prTitle     String?
+  prBody      String?
+  
+  // Commits
+  commits     Json[] // Array of commit objects
+  
+  status      DeliveryStatus
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([taskId])
+  @@index([status])
+}
+
+// Workflow State (Step 4: Workflow Engine)
+model WorkflowState {
+  id          String   @id @default(uuid())
+  taskId      String   @unique
+  
+  currentStep String
+  progress    Int @default(0) // 0-100
+  
+  // State data
+  state       Json
+  history     Json[] // Array of state transitions
+  
+  // Retry logic
+  retryCount  Int @default(0)
+  lastError   String?
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([taskId])
+}
+
+// Enums
+enum TaskStatus {
+  PLANNED
+  RUNNING
+  SUCCESS
+  FAILED
+  RETRY
+  SKIPPED
+}
+
+enum ExecutionType {
+  COMMAND
+  TEST
+  BUILD
+  INSTALL
+  SCRIPT
+}
+
+enum ExecutionStatus {
+  PENDING
+  RUNNING
+  SUCCESS
+  FAILED
+  TIMEOUT
+}
+
+enum FileOperation {
+  CREATE
+  UPDATE
+  DELETE
+  RENAME
+}
+
+enum DeliveryStatus {
+  PENDING
+  BRANCH_CREATED
+  COMMITTED
+  PUSHED
+  PR_CREATED
+  PR_MERGED
+  FAILED
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  DEVELOPER
+}

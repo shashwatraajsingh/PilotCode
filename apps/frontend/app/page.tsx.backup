@@ -1,0 +1,351 @@
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { TaskCreator } from '@/components/TaskCreator'
+import { TaskList } from '@/components/TaskList'
+import { Header } from '@/components/Header'
+import { IDEWorkspace } from '@/components/IDEWorkspace'
+import { motion } from 'framer-motion'
+import { CheckCircle2, Plus, Zap, Shield, Users, ArrowRight, Star } from 'lucide-react'
+
+export default function Home() {
+  const [refreshTrigger, setRefreshTrigger] = useState(0)
+  const router = useRouter()
+
+  const handleTaskCreated = () => {
+    setRefreshTrigger((prev) => prev + 1)
+  }
+
+  const features = [
+    {
+      icon: <Zap className="w-6 h-6" />,
+      title: 'Lightning Fast',
+      description: 'Complete complex development tasks in minutes, not hours. Devin learns your codebase and works autonomously.',
+    },
+    {
+      icon: <Shield className="w-6 h-6" />,
+      title: 'Enterprise Security',
+      description: 'Bank-level security with end-to-end encryption. Your code and data stay private and secure.',
+    },
+    {
+      icon: <Users className="w-6 h-6" />,
+      title: 'Team Collaboration',
+      description: 'Seamlessly integrates with your existing workflow. GitHub, Slack, Linear, and more.',
+    },
+  ]
+
+  const stats = [
+    { number: '50K+', label: 'Tasks Completed' },
+    { number: '99.9%', label: 'Accuracy Rate' },
+    { number: '24/7', label: 'Availability' },
+    { number: '500+', label: 'Companies' },
+  ]
+
+  return (
+    <main className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 font-sans">
+      <Header />
+
+      <div className="pt-20"> {/* Account for fixed header */}
+        <div className="container mx-auto px-6 py-20 max-w-7xl">
+          {/* Hero Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-20"
+          >
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-purple-500/10 via-emerald-400/5 to-amber-400/10 border border-purple-500/20 rounded-full text-sm font-semibold text-purple-300 backdrop-blur-sm mb-8">
+              <div className="w-2 h-2 bg-purple-400 rounded-full animate-pulse"></div>
+              Trusted by 500+ engineering teams worldwide
+            </div>
+
+            <h1 className="text-6xl md:text-8xl font-display font-bold text-white mb-8 leading-[0.9] tracking-tight">
+              Meet{' '}
+              <span className="bg-gradient-to-r from-purple-400 via-emerald-400 to-amber-400 bg-clip-text text-transparent relative">
+                Devin
+                <div className="absolute -bottom-4 left-0 right-0 h-2 bg-gradient-to-r from-purple-400/20 via-emerald-400/20 to-amber-400/20 rounded-full blur-xl"></div>
+              </span>
+              <br />
+              <span className="text-5xl md:text-6xl text-slate-300 font-light">Your AI Software Engineer</span>
+            </h1>
+
+            <p className="text-xl md:text-2xl text-slate-400 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
+              Transform your development workflow with an autonomous AI engineer that codes, tests,
+              and deploys software at scale. From feature development to bug fixes, Devin handles it all.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-20">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => router.push('/create')}
+                className="group px-10 py-5 bg-gradient-to-r from-purple-500 via-emerald-400 to-amber-400 text-white font-bold text-xl rounded-2xl shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 flex items-center justify-center gap-4 relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-purple-500 to-amber-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative z-10 flex items-center gap-4">
+                  <Plus className="w-6 h-6 group-hover:rotate-90 transition-transform duration-300" />
+                  Start Building
+                  <motion.div
+                    className="w-2 h-2 bg-white rounded-full"
+                    animate={{ scale: [1, 1.5, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                </div>
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="group px-10 py-5 border-2 border-white/20 text-white font-bold text-xl rounded-2xl hover:bg-white/10 hover:border-purple-400/50 transition-all duration-300 flex items-center justify-center gap-4 relative backdrop-blur-sm"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-emerald-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></div>
+                <div className="relative z-10 flex items-center gap-4">
+                  <span>Watch Demo</span>
+                  <motion.div
+                    animate={{ x: [0, 4, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                  >
+                    →
+                  </motion.div>
+                </div>
+              </motion.button>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-12 max-w-5xl mx-auto">
+              {stats.map((stat, index) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 + 0.8 }}
+                  className="text-center group"
+                >
+                  <motion.div
+                    className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-emerald-400 bg-clip-text text-transparent mb-3"
+                    whileHover={{ scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
+                    {stat.number}
+                  </motion.div>
+                  <div className="text-slate-400 font-medium text-lg group-hover:text-white transition-colors duration-300">
+                    {stat.label}
+                  </div>
+                  <motion.div
+                    className="w-12 h-1 bg-gradient-to-r from-purple-500 to-emerald-400 mx-auto mt-3 rounded-full opacity-30"
+                    whileHover={{ scaleX: 1.2 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Features Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mb-32"
+          >
+            <div className="text-center mb-20">
+              <motion.h2
+                className="text-5xl md:text-6xl font-display font-bold text-white mb-6 leading-tight"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                Why Choose Devin?
+              </motion.h2>
+              <motion.p
+                className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                Experience the future of software development with AI that actually understands your codebase
+                and works alongside your team.
+              </motion.p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
+              {features.map((feature, index) => (
+                <motion.div
+                  key={feature.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: index * 0.2 }}
+                  className="group bg-white/5 backdrop-blur-xl rounded-3xl p-10 border border-white/10 shadow-2xl hover:shadow-purple-500/10 hover:border-purple-500/20 transition-all duration-500 relative overflow-hidden"
+                >
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-emerald-400/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"
+                    initial={false}
+                  />
+                  <div className="relative z-10">
+                    <motion.div
+                      className="w-16 h-16 bg-gradient-to-br from-purple-500 to-emerald-400 rounded-2xl flex items-center justify-center text-white mb-8 group-hover:scale-110 transition-transform duration-300 shadow-xl"
+                      whileHover={{ rotate: 5 }}
+                      transition={{ type: "spring", stiffness: 400 }}
+                    >
+                      {feature.icon}
+                    </motion.div>
+                    <motion.h3
+                      className="text-3xl font-bold text-white mb-6 leading-tight"
+                      whileHover={{ scale: 1.02 }}
+                    >
+                      {feature.title}
+                    </motion.h3>
+                    <p className="text-slate-300 leading-relaxed text-lg group-hover:text-white transition-colors duration-300">
+                      {feature.description}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Demo Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="mb-32"
+          >
+            <div className="text-center mb-20">
+              <motion.h2
+                className="text-5xl md:text-6xl font-display font-bold text-white mb-6 leading-tight"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                See Devin in Action
+              </motion.h2>
+              <motion.p
+                className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                Watch how Devin autonomously develops, tests, and deploys features in real-time.
+                No more waiting for developers.
+              </motion.p>
+            </div>
+
+            <motion.div
+              className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl overflow-hidden relative"
+              whileHover={{ scale: 1.01 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 via-transparent to-emerald-400/5"></div>
+              <div className="relative z-10">
+                <IDEWorkspace
+                  taskId="demo-task-123"
+                  files={[
+                    {
+                      path: 'src/auth/auth.service.ts',
+                      status: 'modified',
+                      diff: `@@ -1,5 +1,15 @@\n import { Injectable } from '@nestjs/common';\n+import { JwtService } from '@nestjs/jwt';\n+import { UsersService } from '../users/users.service';\n \n @Injectable()\n export class AuthService {\n+  constructor(\n+    private usersService: UsersService,\n+    private jwtService: JwtService,\n+  ) {}\n+\n+  async validateUser(username: string, password: string) {\n+    // JWT validation logic\n+  }\n }`
+                    },
+                    {
+                      path: 'src/auth/auth.controller.ts',
+                      status: 'created',
+                      diff: `import { Controller, Post, Body } from '@nestjs/common';\nimport { AuthService } from './auth.service';\n\n@Controller('auth')\nexport class AuthController {\n  constructor(private authService: AuthService) {}\n\n  @Post('login')\n  async login(@Body() loginDto: LoginDto) {\n    return this.authService.login(loginDto);\n  }\n}`
+                    },
+                    { path: 'package.json', status: 'modified' },
+                  ]}
+                  logs={[
+                    { timestamp: new Date().toISOString(), message: '✓ Analyzing task requirements...', type: 'success' },
+                    { timestamp: new Date().toISOString(), message: '→ Installing @nestjs/jwt and @nestjs/passport', type: 'info' },
+                    { timestamp: new Date().toISOString(), message: '✓ Created auth.controller.ts', type: 'success' },
+                    { timestamp: new Date().toISOString(), message: '→ Modifying auth.service.ts to add JWT validation', type: 'info' },
+                    { timestamp: new Date().toISOString(), message: '✓ Running tests...', type: 'success' },
+                    { timestamp: new Date().toISOString(), message: '✓ All tests passed!', type: 'success' },
+                  ]}
+                  status="running"
+                />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* CTA Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="text-center"
+          >
+            <motion.div
+              className="bg-gradient-to-r from-purple-500/10 via-emerald-400/5 to-amber-400/10 rounded-3xl border border-purple-500/20 p-16 md:p-20 shadow-2xl relative overflow-hidden backdrop-blur-xl"
+              whileHover={{ scale: 1.01 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-slate-900/50 to-slate-800/50 backdrop-blur-sm"></div>
+              <div className="relative z-10">
+                <motion.h2
+                  className="text-5xl md:text-7xl font-display font-bold text-white mb-8 leading-tight"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 }}
+                >
+                  Ready to Transform Your Development?
+                </motion.h2>
+                <motion.p
+                  className="text-xl md:text-2xl text-slate-300 mb-12 max-w-4xl mx-auto leading-relaxed font-light"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                >
+                  Join hundreds of companies already using Devin to ship faster and build better software.
+                  Start your free trial today.
+                </motion.p>
+                <motion.div
+                  className="flex flex-col sm:flex-row gap-6 justify-center"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
+                >
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => router.push('/create')}
+                    className="group px-12 py-6 bg-gradient-to-r from-purple-500 via-emerald-400 to-amber-400 text-white font-bold text-2xl rounded-2xl shadow-2xl hover:shadow-purple-500/30 transition-all duration-300 flex items-center justify-center gap-4 relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-purple-500 to-amber-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <div className="relative z-10 flex items-center gap-4">
+                      <Plus className="w-7 h-7 group-hover:rotate-90 transition-transform duration-300" />
+                      Start Your First Task
+                      <motion.div
+                        animate={{ x: [0, 4, 0] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                      >
+                        →
+                      </motion.div>
+                    </div>
+                  </motion.button>
+                </motion.div>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Task List Section */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="mt-32"
+          >
+            <TaskList refreshTrigger={refreshTrigger} />
+          </motion.div>
+        </div>
+      </div>
+    </main>
+  )
+}
