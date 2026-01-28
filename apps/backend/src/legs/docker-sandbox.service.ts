@@ -152,34 +152,105 @@ export class DockerSandboxService implements OnModuleInit {
     command: string,
     workDir: string,
   ): Promise<ExecutionResult> {
-    const { exec } = require('child_process');
-    const { promisify } = require('util');
-    const execAsync = promisify(exec);
+    const { spawn } = require('child_process');
 
     const startTime = Date.now();
 
-    try {
-      const { stdout, stderr } = await execAsync(command, { cwd: workDir });
-      const duration = Date.now() - startTime;
+    // SECURITY: Sanitize command to prevent injection
+    // Block dangerous shell metacharacters
+    const dangerousPatterns = [
+      /;/,      // Command chaining
+      /\|/,     // Piping
+      /&/,      // Background execution / command chaining
+      /`/,      // Backtick substitution
+      /\$\(/,   // Command substitution
+      />/,      // Output redirection
+      /</,      // Input redirection
+      /\n/,     // Newline injection
+      /\r/,     // Carriage return injection
+    ];
 
-      return {
-        stdout: stdout || '',
-        stderr: stderr || '',
-        exitCode: 0,
-        duration,
-        containerId: 'local',
-      };
-    } catch (error) {
-      const duration = Date.now() - startTime;
+    for (const pattern of dangerousPatterns) {
+      if (pattern.test(command)) {
+        const duration = Date.now() - startTime;
+        return {
+          stdout: '',
+          stderr: `SECURITY: Command rejected - contains dangerous characters: ${pattern.toString()}`,
+          exitCode: 1,
+          duration,
+          containerId: 'local-rejected',
+        };
+      }
+    }
 
+    // SECURITY: Validate working directory is within allowed paths
+    const path = require('path');
+    const resolvedWorkDir = path.resolve(workDir);
+    const allowedPaths = ['/tmp/devin-', '/workspace'];
+    const isAllowedPath = allowedPaths.some(p => resolvedWorkDir.startsWith(p));
+
+    if (!isAllowedPath) {
+      const duration = Date.now() - startTime;
       return {
-        stdout: error.stdout || '',
-        stderr: error.stderr || error.message,
-        exitCode: error.code || 1,
+        stdout: '',
+        stderr: `SECURITY: Working directory "${workDir}" is outside allowed paths`,
+        exitCode: 1,
         duration,
-        containerId: 'local',
+        containerId: 'local-rejected',
       };
     }
+
+    return new Promise((resolve) => {
+      // SECURITY: Use spawn with shell: false to prevent shell injection
+      // Parse command into executable and arguments
+      const parts = command.split(/\s+/);
+      const executable = parts[0];
+      const args = parts.slice(1);
+
+      const child = spawn(executable, args, {
+        cwd: workDir,
+        shell: false, // CRITICAL: Disable shell interpretation
+        timeout: 60000, // 60 second timeout
+        env: {
+          ...process.env,
+          // SECURITY: Restrict PATH to prevent execution of arbitrary binaries
+          PATH: '/usr/local/bin:/usr/bin:/bin',
+        },
+      });
+
+      let stdout = '';
+      let stderr = '';
+
+      child.stdout.on('data', (data: Buffer) => {
+        stdout += data.toString();
+      });
+
+      child.stderr.on('data', (data: Buffer) => {
+        stderr += data.toString();
+      });
+
+      child.on('close', (code: number | null) => {
+        const duration = Date.now() - startTime;
+        resolve({
+          stdout,
+          stderr,
+          exitCode: code ?? 1,
+          duration,
+          containerId: 'local',
+        });
+      });
+
+      child.on('error', (error: Error) => {
+        const duration = Date.now() - startTime;
+        resolve({
+          stdout: '',
+          stderr: error.message,
+          exitCode: 1,
+          duration,
+          containerId: 'local-error',
+        });
+      });
+    });
   }
 
   async cleanup(containerId: string) {

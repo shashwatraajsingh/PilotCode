@@ -1,11 +1,11 @@
-import { Controller, Post, Body, UseGuards, Get, Request } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get, Request, UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { Public } from './decorators/public.decorator';
 import { CurrentUser } from './decorators/current-user.decorator';
 
-import { IsEmail, IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsEmail, IsString, IsNotEmpty, IsOptional, MinLength, Matches } from 'class-validator';
 
 class LoginDto {
   @IsEmail()
@@ -22,8 +22,13 @@ class RegisterDto {
   @IsNotEmpty()
   email: string;
 
+  // SECURITY: Add password strength validation
   @IsString()
   @IsNotEmpty()
+  @MinLength(8, { message: 'Password must be at least 8 characters long' })
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
+    message: 'Password must contain at least one uppercase letter, one lowercase letter, and one number',
+  })
   password: string;
 
   @IsString()
@@ -46,7 +51,7 @@ export class AuthController {
   @Post('register')
   @ApiOperation({ summary: 'Register a new user' })
   @ApiResponse({ status: 201, description: 'User registered successfully' })
-  @ApiResponse({ status: 400, description: 'User already exists' })
+  @ApiResponse({ status: 400, description: 'User already exists or invalid input' })
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
@@ -60,7 +65,9 @@ export class AuthController {
     const user = await this.authService.validateUser(loginDto.email, loginDto.password);
 
     if (!user) {
-      throw new Error('Invalid credentials');
+      // SECURITY: Use proper exception with appropriate status code
+      // Don't reveal whether email or password was wrong
+      throw new UnauthorizedException('Invalid email or password');
     }
 
     return this.authService.login(user);

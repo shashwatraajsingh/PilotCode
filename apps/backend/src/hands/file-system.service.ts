@@ -1,13 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { PrismaService } from '../common/prisma/prisma.service';
 
+// SECURITY: Allowed base directories for file operations
+const ALLOWED_BASE_DIRS = [
+  '/tmp/devin-',  // Task workspaces
+  '/workspace',   // Docker sandbox workspace
+];
+
 @Injectable()
 export class FileSystemService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
+
+  /**
+   * SECURITY: Validate that the file path is within allowed directories
+   * Prevents path traversal attacks (e.g., ../../etc/passwd)
+   */
+  private validatePath(filePath: string): void {
+    // Resolve to absolute path to handle ../ sequences
+    const resolvedPath = path.resolve(filePath);
+
+    // Check if path is within any allowed base directory
+    const isAllowed = ALLOWED_BASE_DIRS.some(baseDir =>
+      resolvedPath.startsWith(baseDir)
+    );
+
+    if (!isAllowed) {
+      throw new ForbiddenException(
+        `Access denied: Path "${filePath}" is outside allowed directories`
+      );
+    }
+
+    // Additional check: prevent null bytes (null byte injection)
+    if (filePath.includes('\0')) {
+      throw new ForbiddenException('Invalid path: null bytes not allowed');
+    }
+  }
 
   async readFile(filePath: string): Promise<string> {
+    this.validatePath(filePath);
     try {
       return await fs.readFile(filePath, 'utf-8');
     } catch (error) {
@@ -16,11 +48,12 @@ export class FileSystemService {
   }
 
   async writeFile(filePath: string, content: string): Promise<void> {
+    this.validatePath(filePath);
     try {
       // Ensure directory exists
       const dir = path.dirname(filePath);
       await fs.mkdir(dir, { recursive: true });
-      
+
       await fs.writeFile(filePath, content, 'utf-8');
     } catch (error) {
       throw new Error(`Failed to write file ${filePath}: ${error.message}`);
@@ -64,6 +97,7 @@ export class FileSystemService {
   }
 
   async deleteFile(filePath: string): Promise<void> {
+    this.validatePath(filePath);
     try {
       const originalContent = await this.readFile(filePath);
       await fs.unlink(filePath);
@@ -83,6 +117,7 @@ export class FileSystemService {
   }
 
   async fileExists(filePath: string): Promise<boolean> {
+    this.validatePath(filePath);
     try {
       await fs.access(filePath);
       return true;
@@ -92,6 +127,7 @@ export class FileSystemService {
   }
 
   async listDirectory(dirPath: string): Promise<string[]> {
+    this.validatePath(dirPath);
     try {
       const entries = await fs.readdir(dirPath, { withFileTypes: true });
       return entries.map((entry) => ({
@@ -105,6 +141,7 @@ export class FileSystemService {
   }
 
   async getDirectoryTree(dirPath: string, maxDepth: number = 3): Promise<any> {
+    this.validatePath(dirPath);
     const tree = await this.buildTree(dirPath, 0, maxDepth);
     return tree;
   }
