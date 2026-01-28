@@ -1,333 +1,421 @@
-# Devin AI - Autonomous Software Engineer
+<div align="center">
 
-🚀 **Production-Ready** | ✨ **Enterprise-Grade** | 🔒 **Secure** | 📊 **Real-Time Monitoring**
+# PilotCode
 
-A fully-featured autonomous AI software engineer that matches Devin AI's capabilities. Built with modern tech stack, it can understand tasks, analyze codebases, plan execution, write code, debug, test, review quality, and deliver production-ready solutions - all autonomously.
+### Autonomous AI Software Engineer
 
-## ✨ Production Features
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![NestJS](https://img.shields.io/badge/NestJS-10.0-e0234e?logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Redis](https://img.shields.io/badge/Redis-7-DC382D?logo=redis&logoColor=white)](https://redis.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-- ✅ **Real-Time WebSocket Updates** - Live task progress and monitoring
-- ✅ **JWT Authentication** - Secure user authentication and authorization
-- ✅ **Context-Aware Planning** - Analyzes entire codebase before making changes
-- ✅ **Code Quality Analysis** - Automated linting, complexity analysis, and formatting
-- ✅ **Multi-Framework Testing** - Jest, Mocha, Pytest, Go tests with coverage
-- ✅ **Rate Limiting** - API protection and abuse prevention
-- ✅ **Structured Logging** - Winston-based enterprise logging
-- ✅ **Error Recovery** - Intelligent retry mechanisms
-- ✅ **BYOK Support** - Bring Your Own Key for API providers
-- ✅ **Docker Isolation** - Sandboxed code execution
+**An enterprise-grade autonomous coding agent that transforms natural language into production-ready code.**
 
-## 🚀 Tech Stack
+[Quick Start](#-quick-start) • [Architecture](#-architecture) • [API Reference](#-api-reference) • [Deployment](#-deployment) • [Contributing](#-contributing)
 
-### Core
-- **Backend**: NestJS (TypeScript) with WebSocket support
-- **Frontend**: Next.js 14 (App Router) + Tailwind CSS + Framer Motion
-- **Database**: PostgreSQL 16 with Prisma ORM
-- **Cache**: Redis 7 for sessions and rate limiting
-- **Message Queue**: Apache Kafka for event streaming
-- **Sandbox**: Docker for isolated code execution
-- **Authentication**: JWT with refresh tokens
-- **Logging**: Winston with multiple transports
-
-### AI & Testing
-- **AI Providers**: OpenAI GPT-4, Anthropic Claude
-- **Testing**: Jest, Mocha, Pytest, Go Test
-- **Code Quality**: ESLint, Pylint, Prettier, Black
-- **Version Control**: Git, GitHub API integration
-
-## 🧠 Architecture - 5 Core Systems
-
-### STEP 1: The Brain (Planner + Task Decomposer)
-**Location**: `apps/backend/src/brain/`
-
-Converts natural language into executable plans:
-- AI-powered task decomposition (OpenAI/Anthropic)
-- Dependency analysis
-- Ordered execution planning
-- Success/failure condition detection
-
-**Example**: "Add JWT authentication" → Install deps → Create auth controller → Add middleware → Write tests → Run tests → Fix errors → Commit
-
-### STEP 2: The Hands (File System + Code Editor)
-**Location**: `apps/backend/src/hands/`
-
-Manipulates code like a real developer:
-- AST-based code parsing & modification
-- Multi-file editing capabilities
-- Git-style diff patching
-- Directory structure management
-- Language-aware code generation
-
-### STEP 3: The Legs (Terminal Runner + Debug Loop)
-**Location**: `apps/backend/src/legs/`
-
-Executes and debugs code autonomously:
-- Docker-based sandboxed execution
-- Real-time stdout/stderr capture
-- AI-powered error analysis
-- Automatic retry with fixes
-- Test-driven debugging loop
-
-### STEP 4: The Workflow Engine
-**Location**: `apps/backend/src/workflow/`
-
-Orchestrates the entire system:
-- State machine (PLANNED → RUNNING → SUCCESS/FAILED → RETRY)
-- Kafka-based event streaming
-- Redis caching for state
-- PostgreSQL for persistence
-- Task history & memory
-- Automatic task progression
-
-### STEP 5: The Delivery Layer
-**Location**: `apps/backend/src/delivery/`
-
-Ships code to production:
-- GitHub integration
-- Auto-branch creation
-- Intelligent commits with AI-generated messages
-- PR creation with detailed descriptions
-- Code review response automation
-
-## 📦 Project Structure
-
-```
-DevinAI/
-├── apps/
-│   ├── backend/              # NestJS Backend
-│   │   ├── src/
-│   │   │   ├── brain/        # STEP 1: Task Planning
-│   │   │   ├── hands/        # STEP 2: Code Editing
-│   │   │   ├── legs/         # STEP 3: Execution
-│   │   │   ├── workflow/     # STEP 4: Orchestration
-│   │   │   ├── delivery/     # STEP 5: GitHub Integration
-│   │   │   ├── common/       # Shared utilities
-│   │   │   └── main.ts
-│   │   ├── prisma/           # Database schema
-│   │   └── package.json
-│   │
-│   └── frontend/             # Next.js Frontend
-│       ├── app/              # App router
-│       ├── components/       # Shadcn + Aceternity UI
-│       ├── lib/              # Utilities
-│       └── package.json
-│
-├── packages/
-│   └── types/                # Shared TypeScript types
-│
-├── docker/
-│   └── sandbox/              # Execution sandbox
-│
-├── docker-compose.yml
-└── package.json
-```
-
-## 🛠️ Quick Start
-
-### Prerequisites
-- Node.js 18+
-- Docker & Docker Compose
-- PostgreSQL (or use Docker)
-- Git
-
-### One-Command Setup
-
-```bash
-# 1. Clone the repository
-git clone <your-repo>
-cd DevinAI
-
-# 2. Run the automated start script
-./start.sh
-```
-
-The script will:
-- ✅ Create `.env` from example if needed
-- ✅ Install all dependencies
-- ✅ Set up database with Prisma
-- ✅ Start Docker services (Postgres, Redis, Kafka)
-- ✅ Launch backend and frontend
-
-### Manual Setup
-
-If you prefer manual control:
-
-```bash
-# 1. Set up environment
-cp .env.example .env
-# Edit .env with your API keys (OpenAI, Anthropic, GitHub)
-
-# 2. Install dependencies
-npm install
-cd apps/backend && npm install
-cd ../frontend && npm install
-
-# 3. Set up database
-cd apps/backend
-npx prisma generate
-npx prisma migrate deploy
-
-# 4. Start infrastructure
-docker-compose up -d postgres redis zookeeper kafka
-
-# 5. Run database migrations
-cd apps/backend
-npx prisma migrate dev
-
-# 6. Start development servers
-cd ../..
-npm run dev
-```
-
-The application will be available at:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:3001
-- API Docs: http://localhost:3001/api
-
-## 🎯 Usage
-
-### Web Interface
-
-1. Open http://localhost:3000
-2. Enter your task: "Add Stripe payment integration to my Next.js app"
-3. Watch Devin plan, code, test, and deliver!
-
-### API Usage
-
-```typescript
-// POST /api/tasks
-{
-  "description": "Add JWT authentication to Express API",
-  "repoUrl": "https://github.com/user/repo",
-  "targetBranch": "main"
-}
-
-// Response
-{
-  "taskId": "uuid",
-  "status": "planned",
-  "executionPlan": {
-    "subtasks": [...]
-  }
-}
-
-// WebSocket for real-time updates
-ws://localhost:3001/tasks/{taskId}/stream
-```
-
-## 🔌 API Endpoints
-
-- `POST /api/tasks` - Create new task
-- `GET /api/tasks/:id` - Get task status
-- `GET /api/tasks/:id/stream` - WebSocket stream
-- `POST /api/tasks/:id/retry` - Retry failed task
-- `GET /api/executions` - List all executions
-- `POST /api/github/pr` - Create PR manually
-
-## 🎨 Features
-
-### AI-Powered Planning
-- Context-aware task breakdown
-- Automatic dependency detection
-- Risk assessment
-- Time estimation
-
-### Smart Code Editing
-- Preserves code style
-- Handles imports automatically
-- Multi-file refactoring
-- Type-safe modifications
-
-### Autonomous Debugging
-- Reads error messages
-- Suggests fixes
-- Applies patches
-- Re-runs tests
-- Learns from failures
-
-### Production-Ready Delivery
-- Clean commit history
-- Meaningful commit messages
-- Comprehensive PR descriptions
-- CI/CD integration
-
-## 🔐 Security
-
-- Sandboxed code execution (Docker)
-- API key encryption
-- Rate limiting
-- Input validation
-- GitHub token security
-
-## 📊 Monitoring
-
-- Real-time task progress via WebSocket
-- Execution logs in PostgreSQL
-- Metrics via Kafka consumers
-- Redis cache statistics
-
-## 🧪 Testing
-
-```bash
-# Run all tests
-npm test
-
-# Run backend tests
-cd apps/backend
-npm test
-
-# Run frontend tests
-cd apps/frontend
-npm test
-
-# E2E tests
-npm run test:e2e
-```
-
-## 🚢 Deployment
-
-```bash
-# Build for production
-npm run build
-
-# Deploy with Docker
-docker-compose -f docker-compose.prod.yml up -d
-
-# Or deploy to cloud platforms
-# Vercel (Frontend) + Railway/Render (Backend)
-```
-
-## 📝 Environment Variables
-
-See `.env.example` for all required variables:
-- `OPENAI_API_KEY` or `ANTHROPIC_API_KEY` - AI provider
-- `GITHUB_TOKEN` - GitHub API access
-- `DATABASE_URL` - PostgreSQL connection
-- `REDIS_URL` - Redis connection
-- `KAFKA_BROKERS` - Kafka brokers
-
-## 🤝 Contributing
-
-Contributions welcome! See CONTRIBUTING.md
-
-## 📄 License
-
-MIT License - see LICENSE file
-
-## 🎬 Demo
-
-Try it with these example tasks:
-
-1. **Add Feature**: "Add user authentication with JWT and refresh tokens"
-2. **Fix Bug**: "Fix the memory leak in the image processing service"
-3. **Refactor**: "Migrate from REST to GraphQL API"
-4. **Test**: "Add comprehensive unit tests for the payment module"
-5. **Deploy**: "Set up CI/CD pipeline with GitHub Actions"
-
-## 🌟 Star History
-
-If you find this project useful, please star it on GitHub!
+</div>
 
 ---
 
-Built with ❤️ using TypeScript, NestJS, Next.js, and AI
+## Overview
+
+PilotCode is a production-ready autonomous software engineer that can understand requirements, analyze codebases, plan execution strategies, write code, debug issues, run tests, and deliver solutions via pull requests—all without human intervention.
+
+Built for teams that need reliable, secure, and scalable AI-assisted development.
+
+### Key Capabilities
+
+| Capability | Description |
+|------------|-------------|
+| **Intelligent Planning** | Decomposes complex tasks into ordered, dependency-aware subtasks |
+| **Code Manipulation** | AST-based parsing with language-aware modifications |
+| **Sandboxed Execution** | Docker-isolated command execution with security boundaries |
+| **Self-Healing Debug** | Autonomous error analysis with iterative fix-and-retry loops |
+| **Git Integration** | Automated branching, commits, and PR creation with AI-generated descriptions |
+| **Real-Time Streaming** | WebSocket-based progress updates and live execution monitoring |
+
+---
+
+## Tech Stack
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         Frontend                                │
+│  Next.js 14 (App Router) • React 18 • Tailwind CSS • WebSocket │
+├─────────────────────────────────────────────────────────────────┤
+│                         API Gateway                             │
+│  NestJS • JWT Auth • Rate Limiting • OpenAPI/Swagger           │
+├─────────────────────────────────────────────────────────────────┤
+│                      Core Services                              │
+│  Brain (Planner) • Hands (Editor) • Legs (Executor) • Delivery │
+├─────────────────────────────────────────────────────────────────┤
+│                      Infrastructure                             │
+│  PostgreSQL 16 • Redis 7 • Apache Kafka • Docker Sandbox       │
+├─────────────────────────────────────────────────────────────────┤
+│                      AI Providers                               │
+│  OpenAI GPT-4 Turbo • Anthropic Claude 3                       │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Architecture
+
+PilotCode follows a modular 5-stage pipeline architecture:
+
+```
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│    Brain     │───▶│    Hands     │───▶│    Legs      │───▶│   Workflow   │───▶│   Delivery   │
+│   (Planner)  │    │   (Editor)   │    │  (Executor)  │    │   (Engine)   │    │    (Git)     │
+└──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘
+      │                    │                   │                   │                   │
+   AI-powered          AST-based           Sandboxed          State machine        GitHub API
+   decomposition       code edits          execution          orchestration        integration
+```
+
+### Stage 1: Brain (`/src/brain/`)
+Converts natural language into structured execution plans using LLM-powered task decomposition with dependency analysis.
+
+### Stage 2: Hands (`/src/hands/`)  
+Manipulates source code through AST parsing, multi-file editing, and intelligent code generation with style preservation.
+
+### Stage 3: Legs (`/src/legs/`)
+Executes commands in Docker-sandboxed environments with real-time output capture and AI-powered error diagnosis.
+
+### Stage 4: Workflow Engine (`/src/workflow/`)
+Orchestrates task progression through state transitions with Kafka event streaming and Redis state caching.
+
+### Stage 5: Delivery (`/src/delivery/`)
+Integrates with GitHub for automated branch creation, intelligent commits, and PR management with AI-generated descriptions.
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 18+ 
+- Docker & Docker Compose
+- PostgreSQL 16+ (or use Docker)
+- Git
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/shashwatraajsingh/PilotCode.git
+cd PilotCode
+
+# Automated setup (recommended)
+./start.sh
+
+# Or manual setup
+cp .env.example .env
+npm install
+npm run install:all
+
+# Database setup
+cd apps/backend
+npx prisma generate
+npx prisma migrate deploy
+cd ../..
+
+# Start infrastructure
+docker-compose up -d postgres redis zookeeper kafka
+
+# Run development servers
+npm run dev
+```
+
+### Access Points
+
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:3000 |
+| Backend API | http://localhost:3001 |
+| API Documentation | http://localhost:3001/api |
+| WebSocket | ws://localhost:3001/events |
+
+---
+
+## Configuration
+
+### Required Environment Variables
+
+```bash
+# AI Provider (at least one required)
+OPENAI_API_KEY=sk-...
+ANTHROPIC_API_KEY=sk-ant-...
+
+# GitHub Integration
+GITHUB_TOKEN=ghp_...
+
+# JWT Security (generate with: openssl rand -base64 64)
+JWT_SECRET=<your-strong-secret>
+JWT_REFRESH_SECRET=<your-strong-refresh-secret>
+
+# Database
+DATABASE_URL=postgresql://user:password@localhost:5432/pilotcode
+
+# Redis
+REDIS_URL=redis://localhost:6379
+
+# Kafka
+KAFKA_BROKERS=localhost:9092
+```
+
+### Optional Configuration
+
+```bash
+# Model settings
+AI_MODEL=gpt-4-turbo-preview
+AI_TEMPERATURE=0.2
+MAX_TOKENS=4096
+
+# Sandbox settings
+USE_DOCKER_SANDBOX=true
+DOCKER_SANDBOX_IMAGE=pilotcode-sandbox:latest
+
+# Production CORS
+ALLOWED_ORIGINS=https://yourdomain.com
+```
+
+---
+
+## API Reference
+
+### Authentication
+
+All endpoints require JWT authentication via Bearer token.
+
+```bash
+# Register
+POST /auth/register
+Content-Type: application/json
+{"email": "user@example.com", "password": "SecurePass123", "name": "User"}
+
+# Login
+POST /auth/login
+Content-Type: application/json
+{"email": "user@example.com", "password": "SecurePass123"}
+
+# Response: { "access_token": "...", "refresh_token": "..." }
+```
+
+### Task Management
+
+```bash
+# Create Task
+POST /tasks
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "description": "Add JWT authentication to the Express API",
+  "repoUrl": "https://github.com/user/repo",
+  "targetBranch": "main",
+  "autoDeliver": true
+}
+
+# Response
+{
+  "taskId": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "started",
+  "executionPlan": {
+    "subtaskCount": 5,
+    "estimatedDuration": "15 minutes",
+    "complexity": "medium"
+  }
+}
+```
+
+```bash
+# Get Task Status
+GET /tasks/:taskId
+Authorization: Bearer <token>
+
+# List Tasks
+GET /tasks?limit=20
+Authorization: Bearer <token>
+
+# Deliver Task (Create PR)
+POST /tasks/:taskId/deliver
+Authorization: Bearer <token>
+```
+
+### WebSocket Events
+
+Connect to `/events` namespace with JWT token:
+
+```javascript
+const socket = io('http://localhost:3001/events', {
+  auth: { token: accessToken }
+});
+
+// Subscribe to task updates
+socket.emit('subscribe:task', { taskId: '...' });
+
+// Listen for events
+socket.on('task:progress', (data) => { /* { taskId, message, progress, step } */ });
+socket.on('task:status', (data) => { /* { taskId, status, metadata } */ });
+socket.on('task:file-change', (data) => { /* { taskId, filePath, operation } */ });
+socket.on('task:command', (data) => { /* { taskId, command, exitCode, stdout, stderr } */ });
+socket.on('task:error', (data) => { /* { taskId, message, recoverable } */ });
+```
+
+---
+
+## Project Structure
+
+```
+PilotCode/
+├── apps/
+│   ├── backend/                    # NestJS API Server
+│   │   ├── src/
+│   │   │   ├── auth/               # JWT authentication
+│   │   │   ├── brain/              # Task planning & decomposition
+│   │   │   ├── hands/              # File system & code editing
+│   │   │   ├── legs/               # Command execution & debugging
+│   │   │   ├── workflow/           # State machine & orchestration
+│   │   │   ├── delivery/           # GitHub integration
+│   │   │   ├── tasks/              # Unified task API
+│   │   │   ├── websocket/          # Real-time events
+│   │   │   └── common/             # Shared utilities & middleware
+│   │   ├── prisma/                 # Database schema & migrations
+│   │   └── package.json
+│   │
+│   └── frontend/                   # Next.js Web Application
+│       ├── app/                    # App Router pages
+│       ├── components/             # React components
+│       ├── contexts/               # React contexts (Auth)
+│       ├── lib/                    # API clients & utilities
+│       └── package.json
+│
+├── docker/                         # Docker configurations
+│   └── sandbox/                    # Isolated execution environment
+│
+├── docker-compose.yml              # Development infrastructure
+├── SECURITY_AUDIT.md               # Security documentation
+└── DEPLOY_RENDER.md                # Deployment guide
+```
+
+---
+
+## Security
+
+PilotCode implements defense-in-depth security measures:
+
+| Layer | Implementation |
+|-------|----------------|
+| **Authentication** | JWT with refresh token rotation, bcrypt password hashing |
+| **Authorization** | Role-based access control, resource ownership validation |
+| **Input Validation** | class-validator DTOs, UUID parameter validation |
+| **Execution Isolation** | Docker sandbox with restricted network, memory limits |
+| **Path Security** | Allowlist-based path validation, traversal prevention |
+| **Command Security** | Spawn with shell=false, dangerous pattern blocking |
+| **HTTP Security** | Security headers, CORS restrictions, rate limiting |
+| **Secret Management** | Environment-based configuration, production fail-fast |
+
+See [SECURITY_AUDIT.md](./SECURITY_AUDIT.md) for detailed security documentation.
+
+---
+
+## Deployment
+
+### Docker Compose (Production)
+
+```bash
+# Build and deploy
+docker-compose -f docker-compose.prod.yml up -d
+
+# View logs
+docker-compose logs -f
+```
+
+### Cloud Platforms
+
+**Recommended Architecture:**
+- **Frontend**: Vercel (automatic Next.js optimization)
+- **Backend**: Render / Railway / AWS ECS
+- **Database**: Managed PostgreSQL (Supabase / RDS)
+- **Cache**: Managed Redis (Upstash / ElastiCache)
+- **Queue**: Managed Kafka (Confluent Cloud / MSK)
+
+See [DEPLOY_RENDER.md](./DEPLOY_RENDER.md) for detailed deployment instructions.
+
+---
+
+## Development
+
+### Running Tests
+
+```bash
+# All tests
+npm test
+
+# Backend unit tests
+cd apps/backend && npm test
+
+# Frontend tests  
+cd apps/frontend && npm test
+
+# E2E tests
+npm run test:e2e
+
+# Coverage report
+npm run test:coverage
+```
+
+### Code Quality
+
+```bash
+# Lint
+npm run lint
+
+# Type check
+npm run typecheck
+
+# Format
+npm run format
+```
+
+---
+
+## Contributing
+
+We welcome contributions. Please read our contributing guidelines before submitting PRs.
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Commit Convention
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+- `feat:` New features
+- `fix:` Bug fixes
+- `docs:` Documentation changes
+- `refactor:` Code refactoring
+- `test:` Test additions/modifications
+- `chore:` Maintenance tasks
+
+---
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](./LICENSE) for details.
+
+---
+
+<div align="center">
+
+**Built with precision by developers, for developers.**
+
+[Report Bug](https://github.com/shashwatraajsingh/PilotCode/issues) • [Request Feature](https://github.com/shashwatraajsingh/PilotCode/issues) • [Documentation](https://github.com/shashwatraajsingh/PilotCode/wiki)
+
+</div>
